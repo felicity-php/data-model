@@ -41,5 +41,24 @@ class ModelBasicTest extends TestCase
         self::assertEquals('prop2', $testModel->getProperty('testProp2'));
 
         self::assertEquals('prop3', $testModel->testProp3);
+
+        self::assertEquals(
+            [
+                'testProp1' => 'thingy',
+                'testProp2' => 'prop2',
+                'testProp3' => 'prop3',
+                'uuid' => $testModel->uuid,
+            ],
+            $testModel->asArray()
+        );
+
+        self::assertEquals(
+            [
+                'testProp1' => 'thingy',
+                'testProp2' => 'prop2',
+                'testProp3' => 'prop3',
+            ],
+            $testModel->asArray(true)
+        );
     }
 }

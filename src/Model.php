@@ -139,4 +139,41 @@ abstract class Model
         // Return the value of the property
         return $this->{$name};
     }
+
+    /**
+     * Defines property handlers
+     * @return array
+     */
+    public function defineHandlers() : array
+    {
+        return [];
+    }
+
+    /**
+     * Returns the model's properties as an array
+     * @param bool $excludeUuid
+     * @return array
+     * @throws ReflectionException
+     */
+    public function asArray(bool $excludeUuid = false) : array
+    {
+        // Create an array for the return values
+        $returnArray = [];
+
+        // Get a reflection class for this object
+        $ref = new ReflectionClass($this);
+
+        // Iterate through the public properties and put them in the array
+        foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+            $returnArray[$prop->name] = $this->getProperty($prop->name);
+        }
+
+        // Remove the uuid if requested
+        if ($excludeUuid) {
+            unset($returnArray['uuid']);
+        }
+
+        // Return the array
+        return $returnArray;
+    }
 }
