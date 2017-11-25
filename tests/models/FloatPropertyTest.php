@@ -8,9 +8,9 @@
 
 namespace tests\models;
 
-use felicity\datamodel\services\datahandlers\FloatHandler;
 use PHPUnit\Framework\TestCase;
 use tests\classes\DataHandlerTestModel;
+use felicity\datamodel\services\datahandlers\FloatHandler;
 
 /**
  * Class FloatPropertyTest
