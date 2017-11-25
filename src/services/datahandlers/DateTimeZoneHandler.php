@@ -17,7 +17,7 @@ use DateTimeZone;
 class DateTimeZoneHandler
 {
     /**
-     * Casts the value to an array
+     * Casts the value
      * @param mixed $val
      * @return DateTimeZone|null
      */

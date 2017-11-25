@@ -17,7 +17,7 @@ use Exception;
 class DateTimeHandler
 {
     /**
-     * Casts the value to an array
+     * Casts the value
      * @param mixed $val
      * @return DateTime|null
      */

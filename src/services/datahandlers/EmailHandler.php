@@ -14,7 +14,7 @@ namespace felicity\datamodel\services\datahandlers;
 class EmailHandler
 {
     /**
-     * Casts the value to a boolean
+     * Casts the value
      * @param mixed $val
      * @return string|null
      */

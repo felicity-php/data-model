@@ -16,7 +16,7 @@ use felicity\datamodel\ModelCollection;
 class CollectionHandler
 {
     /**
-     * Casts the value to a boolean
+     * Casts the value
      * @param mixed $val
      * @return bool|null
      */

@@ -14,7 +14,7 @@ namespace felicity\datamodel\services\datahandlers;
 class ArrayHandler
 {
     /**
-     * Casts the value to an array
+     * Casts the value
      * @param mixed $val
      * @param array $def
      * @return array|null

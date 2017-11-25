@@ -14,7 +14,7 @@ namespace felicity\datamodel\services\datahandlers;
 class BoolHandler
 {
     /**
-     * Casts the value to a boolean
+     * Casts the value
      * @param mixed $val
      * @return bool|null
      */
