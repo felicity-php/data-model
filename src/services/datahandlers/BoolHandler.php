@@ -16,10 +16,14 @@ class BoolHandler
     /**
      * Casts the value to a boolean
      * @param mixed $val
-     * @return bool
+     * @return bool|null
      */
-    public static function castValue($val) : bool
+    public static function castValue($val)
     {
+        if ($val === null) {
+            return null;
+        }
+
         return $val === '1' ||
             $val === 1 ||
             $val === 'true' ||

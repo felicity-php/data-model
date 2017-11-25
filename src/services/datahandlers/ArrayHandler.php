@@ -17,10 +17,14 @@ class ArrayHandler
      * Casts the value to an array
      * @param mixed $val
      * @param array $def
-     * @return array
+     * @return array|null
      */
-    public static function castValue($val, array $def = array()) : array
+    public static function castValue($val, array $def = array())
     {
+        if ($val === null) {
+            return null;
+        }
+
         // Check if incoming value is a string
         if (\is_string($val)) {
             // If it is a string, find the explode operator

@@ -23,6 +23,8 @@ class ArrayPropertyTest extends TestCase
     {
         $model = new DataHandlerTestModel();
 
+        self::assertNull($model->getProperty('testArray'));
+
         $model->testArray = 'test';
         $model->castValues(['asdf']);
         self::assertFalse(\is_array($model->testArray));

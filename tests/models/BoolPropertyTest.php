@@ -24,6 +24,7 @@ class BoolPropertyTest extends TestCase
         $model = new DataHandlerTestModel();
 
         self::assertNull($model->testBool);
+        self::assertNull($model->getProperty('testBool'));
 
         $model->setProperty('testBool', '1');
         self::assertInternalType('boolean', $model->testBool);
