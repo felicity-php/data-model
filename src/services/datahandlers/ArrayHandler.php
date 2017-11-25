@@ -19,7 +19,7 @@ class ArrayHandler
      * @param array $def
      * @return array|null
      */
-    public static function castValue($val, array $def = array())
+    public static function castValue($val, array $def = [])
     {
         if ($val === null) {
             return null;

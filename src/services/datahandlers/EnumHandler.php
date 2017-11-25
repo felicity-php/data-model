@@ -19,7 +19,7 @@ class EnumHandler
      * @param array $def
      * @return mixed|null
      */
-    public static function castValue($val, array $def = array())
+    public static function castValue($val, array $def = [])
     {
         // Make sure our instance def exists and is array and val in array
         if (! isset($def['expect']) ||

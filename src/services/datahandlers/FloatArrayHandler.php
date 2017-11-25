@@ -9,9 +9,9 @@
 namespace felicity\datamodel\services\datahandlers;
 
 /**
- * Class EmailArrayHandler
+ * Class FloatArrayHandler
  */
-class EmailArrayHandler
+class FloatArrayHandler
 {
     /**
      * Casts the value
@@ -34,7 +34,7 @@ class EmailArrayHandler
 
         // Iterate through each of the items and cast to handler
         foreach ($val ?: [] as $item) {
-            $item = EmailHandler::castValue($item);
+            $item = FloatHandler::castValue($item);
 
             if (! $item) {
                 continue;
@@ -45,5 +45,28 @@ class EmailArrayHandler
 
         // Return the array
         return $returnArray ?: null;
+    }
+
+    /**
+     * Validates the value
+     * @param mixed $val
+     * @param array $def
+     * @return array An array of errors
+     */
+    public static function validateValue($val, array $def = []) : array
+    {
+        if (! $val && isset($def['required']) && $def['required']) {
+            return ['This field is required'];
+        }
+
+        foreach ($val ?: [] as $item) {
+            $errors = FloatHandler::validateValue($item, $def);
+
+            if ($errors) {
+                return $errors;
+            }
+        }
+
+        return [];
     }
 }
