@@ -16,7 +16,7 @@ class IntHandler
     /**
      * Casts the value
      * @param mixed $val
-     * @return float|null
+     * @return int|null
      */
     public static function castValue($val)
     {
