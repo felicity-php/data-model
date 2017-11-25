@@ -10,7 +10,7 @@ namespace felicity\datamodel;
 
 use ReflectionClass;
 use ReflectionException;
-use felicity\datamodel\services\generators\Uuid;
+use felicity\datamodel\services\generators\UuidGenerator;
 
 /**
  * Class Model
@@ -20,6 +20,9 @@ abstract class Model
     /** @var string $uuid */
     public $uuid = '';
 
+    /** @var array $handlers */
+    private $handlers = [];
+
     /**
      * Creates and instance of Model
      * @param array $properties
@@ -27,7 +30,11 @@ abstract class Model
      */
     public function __construct(array $properties = array())
     {
-        $this->uuid = Uuid::generateUuid();
+        // Create the UUID for this model
+        $this->uuid = UuidGenerator::generateUuid();
+
+        // Set the handlers
+        $this->setHandlers($this->defineHandlers());
 
         // Set properties
         $this->setProperties($properties);
@@ -38,7 +45,8 @@ abstract class Model
      */
     public function __clone()
     {
-        $this->uuid = Uuid::generateUuid();
+        // Create a new UUID for the cloned model
+        $this->uuid = UuidGenerator::generateUuid();
     }
 
     /**
@@ -50,6 +58,26 @@ abstract class Model
     public function __isset(string $name) : bool
     {
         return $this->hasProperty($name);
+    }
+
+    /**
+     * Gets the defined properties
+     * @return array
+     * @throws ReflectionException
+     */
+    public function getDefinedProperties() : array
+    {
+        // Get a reflection class for this object
+        $ref = new ReflectionClass($this);
+
+        $returnArray = [];
+
+        // Iterate through the public properties and put them in the array
+        foreach ($ref->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+            $returnArray[] = $prop->name;
+        }
+
+        return $returnArray;
     }
 
     /**
@@ -86,7 +114,7 @@ abstract class Model
      * @return self
      * @throws ReflectionException
      */
-    public function setProperties(array $properties = array()) : Model
+    public function setProperties(array $properties = array()) : self
     {
         // Make sure incoming properties var is iterable
         if (! \is_array($properties)) {
@@ -110,7 +138,7 @@ abstract class Model
      * @return self
      * @throws ReflectionException
      */
-    public function setProperty(string $name, $val) : Model
+    public function setProperty(string $name, $val) : self
     {
         // Check if the property is public
         if (! $this->hasProperty($name)) {
@@ -144,9 +172,18 @@ abstract class Model
      * Defines property handlers
      * @return array
      */
-    public function defineHandlers() : array
+    protected function defineHandlers() : array
     {
         return [];
+    }
+
+    /**
+     * Gets the handlers
+     * @return array
+     */
+    public function getHandlers() : array
+    {
+        return $this->handlers;
     }
 
     /**
@@ -175,5 +212,92 @@ abstract class Model
 
         // Return the array
         return $returnArray;
+    }
+
+    /**
+     * Sets property handlers
+     * @param array $handlers
+     * @return self
+     */
+    public function setHandlers(array $handlers) : Model
+    {
+        foreach ($handlers as $prop => $handlerConfig) {
+            $this->setHandler($prop, $handlerConfig);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets a property's handler
+     * @param string $prop
+     * @param mixed $handlerConfig
+     * @return self
+     */
+    public function setHandler(string $prop, $handlerConfig) : self
+    {
+        $this->handlers[$prop] = $handlerConfig;
+
+        return $this;
+    }
+
+    /**
+     * Unsets handlers for specified propertie(s)
+     * @param array :
+     * @return self
+     */
+    public function unsetHandlers(array $props) : self
+    {
+        foreach ($props as $prop) {
+            $this->unsetHandler($prop);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Unsets the handler for the specified property
+     * @param string $prop
+     * @return self
+     */
+    public function unsetHandler(string $prop) : self
+    {
+        if (isset($this->handlers[$prop])) {
+            unset($this->handlers[$prop]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Casts the model's values
+     * @param array $props
+     * @return self
+     * @throws ReflectionException
+     */
+    public function castValues(array $props = []) : self
+    {
+        $props = $props ?: $this->getDefinedProperties();
+
+        foreach ($props as $prop) {
+            if (! isset($this->handlers[$prop]['class']) ||
+                ! $this->hasProperty($prop) ||
+                ! class_exists($this->handlers[$prop]['class']) ||
+                ! method_exists($this->handlers[$prop]['class'], 'castValue')
+            ) {
+                continue;
+            }
+
+            $this->{$prop} = \call_user_func(
+                [
+                    $this->handlers[$prop]['class'],
+                    'castValue',
+                ],
+                $this->{$prop},
+                $this->handlers[$prop]
+            );
+        }
+
+        return $this;
     }
 }

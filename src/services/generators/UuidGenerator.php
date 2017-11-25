@@ -11,7 +11,7 @@ namespace felicity\datamodel\services\generators;
 /**
  * Class Uuid
  */
-class Uuid
+class UuidGenerator
 {
     /**
      * Generate a uuid
