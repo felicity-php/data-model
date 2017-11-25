@@ -10,7 +10,7 @@ namespace felicity\datamodel;
 
 use ReflectionClass;
 use ReflectionException;
-use felicity\datamodel\service\generator\Uuid;
+use felicity\datamodel\services\generators\Uuid;
 
 /**
  * Class Model

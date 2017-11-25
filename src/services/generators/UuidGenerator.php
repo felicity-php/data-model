@@ -6,7 +6,7 @@
  * @license Apache-2.0
  */
 
-namespace felicity\datamodel\service\generator;
+namespace felicity\datamodel\services\generators;
 
 /**
  * Class Uuid
