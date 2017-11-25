@@ -6,7 +6,7 @@
  * @license Apache-2.0
  */
 
-namespace tests\models;
+namespace tests\classes;
 
 use felicity\datamodel\Model;
 

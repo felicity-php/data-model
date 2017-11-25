@@ -6,13 +6,13 @@
  * @license Apache-2.0
  */
 
-namespace tests\services\config;
+namespace tests\models;
 
 use PHPUnit\Framework\TestCase;
-use tests\models\ModelBasicTestModel;
+use tests\classes\ModelBasicTestModel;
 
 /**
- * Class ConfigTest
+ * Class ModelBasicTest
  */
 class ModelBasicTest extends TestCase
 {
