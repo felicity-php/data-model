@@ -141,6 +141,18 @@ abstract class Model
      * @return self
      * @throws ReflectionException
      */
+    public function set(string $name, $val) : self
+    {
+        return $this->setProperty($name, $val);
+    }
+
+    /**
+     * Sets a model property
+     * @param string $name
+     * @param mixed $val
+     * @return self
+     * @throws ReflectionException
+     */
     public function setProperty(string $name, $val) : self
     {
         // Check if the property is public
@@ -155,6 +167,17 @@ abstract class Model
         $this->castValues([$name]);
 
         return $this;
+    }
+
+    /**
+     * Gets a model property
+     * @param string $name
+     * @return mixed
+     * @throws ReflectionException
+     */
+    public function get(string $name)
+    {
+        return $this->getProperty($name);
     }
 
     /**
