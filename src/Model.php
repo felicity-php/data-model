@@ -23,6 +23,9 @@ abstract class Model
     /** @var array $handlers */
     private $handlers = [];
 
+    /** @var array $errors */
+    private $errors = array();
+
     /**
      * Creates and instance of Model
      * @param array $properties
@@ -303,6 +306,128 @@ abstract class Model
                 $this->handlers[$prop]
             );
         }
+
+        return $this;
+    }
+
+    /**
+     * Validates the model
+     * @return bool
+     * @throws ReflectionException
+     */
+    public function validate() : bool
+    {
+        // Set up the errors array
+        $errors = [];
+
+        // Run casters
+        $this->castValues();
+
+        // Iterate through model properties
+        foreach ($this->getDefinedProperties() as $prop) {
+            $val = $this->{$prop};
+            $def = $this->handlers[$prop] ?? [];
+
+            // Get the potential custom validation method name
+            $customMethod = 'validate' . ucfirst($prop);
+
+            // Check if there is a custom validation method
+            if (method_exists($this, $customMethod)) {
+                // Run specified method to get validation errors
+                $validationErrors = $this->{$customMethod}($val, $def);
+
+                // Set validation errors if there are any
+                if ($validationErrors) {
+                    $errors[$prop] = $validationErrors;
+                }
+
+                // Custom method handled it for us, continue
+                continue;
+            }
+
+            // Check if there's a custom handler class and validation method
+            if (isset($this->handlers[$prop]['class']) &&
+                $this->hasProperty($prop) &&
+                class_exists($this->handlers[$prop]['class']) &&
+                method_exists($this->handlers[$prop]['class'], 'validateValue')
+            ) {
+                // Run validation method
+                $validationErrors = \call_user_func(
+                    [
+                        $this->handlers[$prop]['class'],
+                        'validateValue',
+                    ],
+                    $this->{$prop},
+                    $this->handlers[$prop]
+                );
+
+                // Set validation errors if there are any
+                if ($validationErrors) {
+                    $errors[$prop] = $validationErrors;
+                }
+
+                // Class handled validation for us, go to next
+                continue;
+            }
+
+            // Since there was no custom handler, validate if required
+            if (! $val && isset($def['required']) && $def['required']) {
+                $errors[$prop][] = 'This field is required';
+            }
+        }
+
+        // Set the errors
+        $this->errors = $errors;
+
+        // Return result
+        return ! $this->hasErrors();
+    }
+
+    /**
+     * Checks if model has errors
+     * @return bool
+     */
+    public function hasErrors() : bool
+    {
+        return \count($this->errors) !== 0;
+    }
+
+    /**
+     * Get errors
+     * @return array
+     */
+    public function getErrors() : array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Adds error to property
+     * @param string $prop
+     * @param string $message
+     * @return self
+     * @throws ReflectionException
+     */
+    public function addError(string $prop, string $message) : self
+    {
+        // Make sure the specified property is available on the model
+        if (! $this->hasProperty($prop)) {
+            return $this;
+        }
+
+        // Start off with an empty array for existing errors
+        $attrErrors = array();
+
+        // If the model already has errors for this attribute, get them
+        if (isset($this->errors[$prop])) {
+            $attrErrors = $this->errors[$prop];
+        }
+
+        // Add the error to the array
+        $attrErrors[] = $message;
+
+        // Add the errors to the model
+        $this->errors[$prop] = $attrErrors;
 
         return $this;
     }

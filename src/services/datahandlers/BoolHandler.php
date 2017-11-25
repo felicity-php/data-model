@@ -31,4 +31,22 @@ class BoolHandler
             $val === 'y' ||
             $val === 'yes';
     }
+
+    /**
+     * Validates the value
+     * @param mixed $val
+     * @param array $def
+     * @return array An array of errors
+     */
+    public static function validateValue($val, array $def = []) : array
+    {
+        if (! \is_bool($val) &&
+            isset($def['required']) &&
+            $def['required']
+        ) {
+            return ['This field is required'];
+        }
+
+        return [];
+    }
 }
