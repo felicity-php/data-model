@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeZone;
 use felicity\datamodel\Model;
 use felicity\datamodel\ModelCollection;
+use felicity\datamodel\services\datahandlers\BoolHandler;
 use felicity\datamodel\services\datahandlers\ArrayHandler;
 
 /**
@@ -20,10 +21,10 @@ use felicity\datamodel\services\datahandlers\ArrayHandler;
 class DataHandlerTestModel extends Model
 {
     /** @var string $testArray */
-    public $testArray = [];
+    public $testArray;
 
     /** @var string $testBool */
-    public $testBool = false;
+    public $testBool;
 
     /** @var ModelCollection $testCollection */
     public $testCollection;
@@ -75,6 +76,9 @@ class DataHandlerTestModel extends Model
         return [
             'testArray' => [
                 'class' => ArrayHandler::class,
+            ],
+            'testBool' => [
+                'class' => BoolHandler::class,
             ],
         ];
     }

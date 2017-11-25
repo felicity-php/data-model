@@ -14,7 +14,7 @@ namespace felicity\datamodel\services\datahandlers;
 class ArrayHandler
 {
     /**
-     * Generate a uuid
+     * Casts the value to an array
      * @param mixed $val
      * @param array $def
      * @return array

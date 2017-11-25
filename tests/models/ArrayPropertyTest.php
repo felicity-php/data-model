@@ -17,7 +17,7 @@ use tests\classes\DataHandlerTestModel;
 class ArrayPropertyTest extends TestCase
 {
     /**
-     * Tests config setting and getting
+     * Runs the test
      */
     public function testModel()
     {
