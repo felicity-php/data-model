@@ -148,6 +148,9 @@ abstract class Model
         // Set the property
         $this->{$name} = $val;
 
+        // Cast the value
+        $this->castValues([$name]);
+
         return $this;
     }
 
@@ -163,6 +166,9 @@ abstract class Model
         if (! $this->hasProperty($name)) {
             return null;
         }
+
+        // Run cast values
+        $this->castValues([$name]);
 
         // Return the value of the property
         return $this->{$name};
