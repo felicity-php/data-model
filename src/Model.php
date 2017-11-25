@@ -289,22 +289,35 @@ abstract class Model
         $props = $props ?: $this->getDefinedProperties();
 
         foreach ($props as $prop) {
-            if (! isset($this->handlers[$prop]['class']) ||
-                ! $this->hasProperty($prop) ||
-                ! class_exists($this->handlers[$prop]['class']) ||
-                ! method_exists($this->handlers[$prop]['class'], 'castValue')
-            ) {
+            // Check if this property is a thing
+            if (! $this->hasProperty($prop)) {
                 continue;
             }
 
-            $this->{$prop} = \call_user_func(
-                [
-                    $this->handlers[$prop]['class'],
-                    'castValue',
-                ],
-                $this->{$prop},
-                $this->handlers[$prop]
-            );
+            // Get the potential custom casting method name
+            $customMethod = 'cast' . ucfirst($prop);
+
+            // Check if there's a handler class and method
+            if (isset($this->handlers[$prop]['class']) &&
+                class_exists($this->handlers[$prop]['class']) &&
+                method_exists($this->handlers[$prop]['class'], 'castValue')
+            ) {
+                // Run the method
+                $this->{$prop} = \call_user_func(
+                    [
+                        $this->handlers[$prop]['class'],
+                        'castValue',
+                    ],
+                    $this->{$prop},
+                    $this->handlers[$prop]
+                );
+            }
+
+            // Check if there's a custom handler method
+            if (method_exists($this, $customMethod)) {
+                // Run the specified method to cast the value
+                $this->{$prop} = $this->{$customMethod}($this->{$prop});
+            }
         }
 
         return $this;
@@ -347,7 +360,6 @@ abstract class Model
 
             // Check if there's a custom handler class and validation method
             if (isset($this->handlers[$prop]['class']) &&
-                $this->hasProperty($prop) &&
                 class_exists($this->handlers[$prop]['class']) &&
                 method_exists($this->handlers[$prop]['class'], 'validateValue')
             ) {
